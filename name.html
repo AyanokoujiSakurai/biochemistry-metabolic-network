@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key Molecules and Enzymes in Biochemistry Metabolism Network</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 60px 0;
+            color: white;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .section {
+            margin-bottom: 50px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .section:nth-child(2) { animation-delay: 0.4s; }
+        .section:nth-child(3) { animation-delay: 0.6s; }
+        .section:nth-child(4) { animation-delay: 0.8s; }
+        .section:nth-child(5) { animation-delay: 1.0s; }
+
+        .section h2 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .section h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            border-radius: 2px;
+        }
+
+        .molecule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .molecule-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .molecule-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+
+        .molecule-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            border-color: #667eea;
+        }
+
+        .molecule-name {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .molecule-name i {
+            margin-right: 10px;
+            color: #667eea;
+            display: inline-block;
+        }
+
+
+        .molecule-description {
+            color: #555;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .enzyme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .enzyme-card {
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid #28a745;
+            transition: all 0.3s ease;
+        }
+
+        .enzyme-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .enzyme-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .enzyme-name i {
+            margin-right: 8px;
+            color: #28a745;
+        }
+
+        .enzyme-function {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 40px 0;
+            box-shadow: 0 10px 30px rgba(102,126,234,0.3);
+        }
+
+        .highlight-box h3 {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .highlight-box p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            color: white;
+            opacity: 0.8;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2em;
+            }
+
+            .main-content {
+                padding: 20px;
+                margin: 20px;
+            }
+
+            .molecule-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .enzyme-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section h2 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🧬 Biochemistry Metabolism Network</h1>
+            <p>Exploring key molecules and enzymes in complex metabolic pathways within cells</p>
+        </header>
+
+        <main class="main-content">
+            <section class="section">
+                <h2>⚡ Energy Metabolism Related Compounds</h2>
+                <div class="molecule-grid">
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/ATP" target="_blank" style="color: inherit; text-decoration: none;">ATP</a>
+                        </div>
+                        <div class="molecule-description">Primary energy carrier in cells</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/ADP" target="_blank" style="color: inherit; text-decoration: none;">ADP</a>
+                        </div>
+                        <div class="molecule-description">Product of ATP hydrolysis, can be rephosphorylated to form ATP</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/AMP" target="_blank" style="color: inherit; text-decoration: none;">AMP</a>
+                        </div>
+                        <div class="molecule-description">Adenosine phosphate, regulatory factor for AMP-activated protein kinase</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/NADH" target="_blank" style="color: inherit; text-decoration: none;">NADH</a>
+                        </div>
+                        <div class="molecule-description">Primary electron carrier in oxidative respiration chain</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/NAD%2B" target="_blank" style="color: inherit; text-decoration: none;">NAD+</a>
+                        </div>
+                        <div class="molecule-description">Oxidized form of NADH, participates in various dehydrogenation reactions</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/FADH2" target="_blank" style="color: inherit; text-decoration: none;">FADH2</a>
+                        </div>
+                        <div class="molecule-description">Electron carrier in complex II of electron transport chain</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/FAD" target="_blank" style="color: inherit; text-decoration: none;">FAD</a>
+                        </div>
+                        <div class="molecule-description">Oxidized form of FADH2</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Acetyl-CoA" target="_blank" style="color: inherit; text-decoration: none;">Acetyl-CoA</a>
+                        </div>
+                        <div class="molecule-description">Central molecule in fatty acid oxidation and carbohydrate metabolism</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🔬 Glycolysis Pathway (Glycolysis) Intermediates</h2>
+                <div class="molecule-grid">
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Glucose" target="_blank" style="color: inherit; text-decoration: none;">Glucose</a>
+                        </div>
+                        <div class="molecule-description">Initial substrate of glycolysis, six-carbon monosaccharide</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Glucose-6-phosphate" target="_blank" style="color: inherit; text-decoration: none;">Glucose-6-phosphate</a>
+                        </div>
+                        <div class="molecule-description">Product of glucose phosphorylation by hexokinase</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Fructose-6-phosphate" target="_blank" style="color: inherit; text-decoration: none;">Fructose-6-phosphate</a>
+                        </div>
+                        <div class="molecule-description">Formed from glucose-6-phosphate by phosphohexose isomerase</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Fructose-1,6-bisphosphate" target="_blank" style="color: inherit; text-decoration: none;">Fructose-1,6-bisphosphate</a>
+                        </div>
+                        <div class="molecule-description">Formed from fructose-6-phosphate by phosphofructokinase</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Dihydroxyacetone_phosphate" target="_blank" style="color: inherit; text-decoration: none;">Dihydroxyacetone phosphate & Glyceraldehyde-3-phosphate</a>
+                        </div>
+                        <div class="molecule-description">Two three-carbon compounds formed by aldolase cleavage of fructose-1,6-bisphosphate</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/1,3-Bisphosphoglycerate" target="_blank" style="color: inherit; text-decoration: none;">1,3-Bisphosphoglycerate</a>
+                        </div>
+                        <div class="molecule-description">Product formed by oxidative phosphorylation of glyceraldehyde-3-phosphate</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/3-Phosphoglycerate" target="_blank" style="color: inherit; text-decoration: none;">3-Phosphoglycerate</a>
+                        </div>
+                        <div class="molecule-description">Formed from 1,3-bisphosphoglycerate by phosphoglycerate kinase</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/2-Phosphoglycerate" target="_blank" style="color: inherit; text-decoration: none;">2-Phosphoglycerate</a>
+                        </div>
+                        <div class="molecule-description">Formed from 3-phosphoglycerate by phosphoglycerate mutase</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Phosphoenolpyruvate" target="_blank" style="color: inherit; text-decoration: none;">Phosphoenolpyruvate</a>
+                        </div>
+                        <div class="molecule-description">High-energy compound formed by dehydration of 2-phosphoglycerate by enolase</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Pyruvate" target="_blank" style="color: inherit; text-decoration: none;">Pyruvate</a>
+                        </div>
+                        <div class="molecule-description">End product of glycolysis, can enter TCA cycle or be converted to lactate</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>📊 Tricarboxylic Acid Cycle (TCA Cycle) Compounds</h2>
+                <div class="molecule-grid">
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Oxaloacetate" target="_blank" style="color: inherit; text-decoration: none;">Oxaloacetate</a>
+                        </div>
+                        <div class="molecule-description">Starting compound of TCA cycle, combines with acetyl-CoA to form citrate</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Citrate" target="_blank" style="color: inherit; text-decoration: none;">Citrate</a>
+                        </div>
+                        <div class="molecule-description">First product of TCA cycle, formed by condensation of oxaloacetate and acetyl-CoA</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Isocitrate" target="_blank" style="color: inherit; text-decoration: none;">Isocitrate</a>
+                        </div>
+                        <div class="molecule-description">Isomer formed from citrate by aconitase rearrangement</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Alpha-Ketoglutarate" target="_blank" style="color: inherit; text-decoration: none;">α-Ketoglutarate</a>
+                        </div>
+                        <div class="molecule-description">Important intermediate formed by isocitrate dehydrogenation, can be converted to glutamate</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Succinyl-CoA" target="_blank" style="color: inherit; text-decoration: none;">Succinyl-CoA</a>
+                        </div>
+                        <div class="molecule-description">Product of α-ketoglutarate oxidative decarboxylation, contains high-energy thioester bond</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Succinate" target="_blank" style="color: inherit; text-decoration: none;">Succinate</a>
+                        </div>
+                        <div class="molecule-description">Four-carbon dicarboxylic acid formed by enzymatic release of CoA from succinyl-CoA</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Fumarate" target="_blank" style="color: inherit; text-decoration: none;">Fumarate</a>
+                        </div>
+                        <div class="molecule-description">Fumaric acid derivative formed by dehydrogenation of succinate</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Malate" target="_blank" style="color: inherit; text-decoration: none;">Malate</a>
+                        </div>
+                        <div class="molecule-description">Hydroxy acid formed by hydration of fumarate, final step regenerates oxaloacetate</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🧬 Glycogen Metabolism Related</h2>
+                <div class="molecule-grid">
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Glucose-1-phosphate" target="_blank" style="color: inherit; text-decoration: none;">Glucose-1-phosphate</a>
+                        </div>
+                        <div class="molecule-description">Product released from glycogen by glycogen phosphorylase</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/UDP-glucose" target="_blank" style="color: inherit; text-decoration: none;">UDP-glucose</a>
+                        </div>
+                        <div class="molecule-description">Important precursor for glycogen synthesis, substrate for glycogen synthase</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Glycogen" target="_blank" style="color: inherit; text-decoration: none;">Glycogen</a>
+                        </div>
+                        <div class="molecule-description">Glucose polymer stored in animal cells, primarily in liver and muscle</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🌿 Photosynthesis Related</h2>
+                <div class="molecule-grid">
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Ribose_5-phosphate" target="_blank" style="color: inherit; text-decoration: none;">Ribose 5-phosphate</a>
+                        </div>
+                        <div class="molecule-description">Important intermediate in pentose phosphate pathway</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/3-Phosphoglycerate" target="_blank" style="color: inherit; text-decoration: none;">3-Phosphoglycerate</a>
+                        </div>
+                        <div class="molecule-description">First product after carbon fixation in photosynthesis</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Glyceraldehyde_3-phosphate" target="_blank" style="color: inherit; text-decoration: none;">Glyceraldehyde 3-phosphate</a>
+                        </div>
+                        <div class="molecule-description">Product of photosynthetic carbon fixation cycle, can be converted to glucose</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Photorespiration" target="_blank" style="color: inherit; text-decoration: none;">Photorespiration</a>
+                        </div>
+                        <div class="molecule-description">Process in C3 plants where oxygen is consumed and CO2 is released under light conditions</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Carbon_dioxide" target="_blank" style="color: inherit; text-decoration: none;">CO2</a>
+                        </div>
+                        <div class="molecule-description">Carbon source for photosynthesis, fixed into organic compounds</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Oxygen" target="_blank" style="color: inherit; text-decoration: none;">O2</a>
+                        </div>
+                        <div class="molecule-description">Byproduct produced by photolysis of water in photosynthesis</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Nicotinamide_adenine_dinucleotide_phosphate" target="_blank" style="color: inherit; text-decoration: none;">NADP+/NADPH</a>
+                        </div>
+                        <div class="molecule-description">Electron carriers in photosynthetic electron transport chain</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Water" target="_blank" style="color: inherit; text-decoration: none;">H2O</a>
+                        </div>
+                        <div class="molecule-description">Electron and proton donor in photosynthesis</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🧪 Pentose Phosphate Pathway Related</h2>
+                <div class="molecule-grid">
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/6-Phosphogluconate" target="_blank" style="color: inherit; text-decoration: none;">6-Phosphogluconate</a>
+                        </div>
+                        <div class="molecule-description">Product of oxidative phase in pentose phosphate pathway</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Ribose_5-phosphate" target="_blank" style="color: inherit; text-decoration: none;">Ribose 5-phosphate</a>
+                        </div>
+                        <div class="molecule-description">Product of pentose phosphate pathway, used for nucleic acid synthesis</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🏃‍♂️ Exercise Metabolism Related</h2>
+                <div class="molecule-grid">
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Lactic_acid" target="_blank" style="color: inherit; text-decoration: none;">Lactate</a>
+                        </div>
+                        <div class="molecule-description">Product of pyruvate reduction under anaerobic conditions</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Acetaldehyde" target="_blank" style="color: inherit; text-decoration: none;">Acetaldehyde</a>
+                        </div>
+                        <div class="molecule-description">Intermediate product of ethanol fermentation</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Ethanol" target="_blank" style="color: inherit; text-decoration: none;">Ethanol</a>
+                        </div>
+                        <div class="molecule-description">Final product of yeast fermentation</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Alanine" target="_blank" style="color: inherit; text-decoration: none;">Alanine</a>
+                        </div>
+                        <div class="molecule-description">Product of pyruvate transamination with glutamate in muscle</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Phosphorylation" target="_blank" style="color: inherit; text-decoration: none;">Phosphorylation</a>
+                        </div>
+                        <div class="molecule-description">Important mechanism for metabolic regulation</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🔄 Amino Acid Metabolism Related</h2>
+                <div class="molecule-grid">
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Aspartate" target="_blank" style="color: inherit; text-decoration: none;">Aspartate</a><br>
+                            <a href="https://en.wikipedia.org/wiki/Oxaloacetate" target="_blank" style="color: inherit; text-decoration: none;">Oxaloacetate</a><br>
+                            <a href="https://en.wikipedia.org/wiki/Malate" target="_blank" style="color: inherit; text-decoration: none;">Malate</a>
+                        </div>
+                        <div class="molecule-description">Components of aspartate-malate shuttle system</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Alpha-Ketoglutarate" target="_blank" style="color: inherit; text-decoration: none;">α-Ketoglutarate</a> <a href="https://en.wikipedia.org/wiki/Glutamic_acid" target="_blank" style="color: inherit; text-decoration: none;">Glutamate</a>
+                        </div>
+                        <div class="molecule-description">Substrate and product of glutamate dehydrogenase</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Glutamine" target="_blank" style="color: inherit; text-decoration: none;">Glutamine</a>
+                        </div>
+                        <div class="molecule-description">Important compound in nitrogen metabolism, storage form of ammonia</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Ammonia" target="_blank" style="color: inherit; text-decoration: none;">NH4+</a>
+                        </div>
+                        <div class="molecule-description">Ionic form of ammonia, toxic but metabolizable</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Vitamin_B6" target="_blank" style="color: inherit; text-decoration: none;">Vitamin B6/pyridoxine</a>
+                        </div>
+                        <div class="molecule-description">Cofactor for transaminases</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>💰 Nucleotide Metabolism Related</h2>
+                <div class="molecule-grid">
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/ADP" target="_blank" style="color: inherit; text-decoration: none;">ADP</a>、<a href="https://en.wikipedia.org/wiki/GDP" target="_blank" style="color: inherit; text-decoration: none;">GDP</a> <a href="https://en.wikipedia.org/wiki/ATP" target="_blank" style="color: inherit; text-decoration: none;">ATP</a>、<a href="https://en.wikipedia.org/wiki/GTP" target="_blank" style="color: inherit; text-decoration: none;">GTP</a>
+                        </div>
+                        <div class="molecule-description">Oxidized and reduced forms of nucleoside triphosphates</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Oxaloacetate" target="_blank" style="color: inherit; text-decoration: none;">Oxaloacetate</a>
+                        </div>
+                        <div class="molecule-description">Starting compound of urea cycle</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Aspartate" target="_blank" style="color: inherit; text-decoration: none;">Aspartate</a>
+                        </div>
+                        <div class="molecule-description">Important amino acid in urea cycle</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Carbamoyl_phosphate" target="_blank" style="color: inherit; text-decoration: none;">Carbamoyl phosphate</a>
+                        </div>
+                        <div class="molecule-description">Activated intermediate in urea synthesis</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Ornithine" target="_blank" style="color: inherit; text-decoration: none;">Ornithine</a>
+                        </div>
+                        <div class="molecule-description">Carrier molecule in urea cycle</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Citrulline" target="_blank" style="color: inherit; text-decoration: none;">Citrulline</a>
+                        </div>
+                        <div class="molecule-description">Product of ornithine condensation with carbamoyl phosphate</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Argininosuccinate" target="_blank" style="color: inherit; text-decoration: none;">Argininosuccinate</a>
+                        </div>
+                        <div class="molecule-description">Product of citrulline condensation with aspartate</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Urea" target="_blank" style="color: inherit; text-decoration: none;">Urea</a>
+                        </div>
+                        <div class="molecule-description">Final product of ammonia detoxification</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🍶 Alcohol Metabolism Related</h2>
+                <div class="molecule-grid">
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Acetaldehyde" target="_blank" style="color: inherit; text-decoration: none;">Acetaldehyde</a>
+                        </div>
+                        <div class="molecule-description">Intermediate product of ethanol fermentation, toxic</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Ethanol" target="_blank" style="color: inherit; text-decoration: none;">Ethanol</a>
+                        </div>
+                        <div class="molecule-description">Final product of yeast fermentation</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🏥 Liver Metabolism Related</h2>
+                <div class="molecule-grid">
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Glucagon" target="_blank" style="color: inherit; text-decoration: none;">Glucagon</a>
+                        </div>
+                        <div class="molecule-description">Hormone that promotes glycogen breakdown and gluconeogenesis</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Glycogen_phosphorylase" target="_blank" style="color: inherit; text-decoration: none;">Glycogen phosphorylase a</a>
+                        </div>
+                        <div class="molecule-description">Active form of glycogen breakdown</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Glycogen_phosphorylase" target="_blank" style="color: inherit; text-decoration: none;">Glycogen phosphorylase b</a>
+                        </div>
+                        <div class="molecule-description">Inactive form of glycogen breakdown</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Insulin" target="_blank" style="color: inherit; text-decoration: none;">Insulin</a>
+                        </div>
+                        <div class="molecule-description">Hormone that promotes glycogen synthesis</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🧴 Fatty Acid Metabolism Related</h2>
+                <div class="molecule-grid">
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Palmitoyl-CoA" target="_blank" style="color: inherit; text-decoration: none;">Palmitoyl-CoA</a>
+                        </div>
+                        <div class="molecule-description">Final product of fatty acid synthesis</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Palmitoyl-carnitine" target="_blank" style="color: inherit; text-decoration: none;">Palmitoyl-carnitine</a>
+                        </div>
+                        <div class="molecule-description">Carrier for fatty acid transport across mitochondrial membrane</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Malonyl-CoA" target="_blank" style="color: inherit; text-decoration: none;">Malonyl-CoA</a>
+                        </div>
+                        <div class="molecule-description">Two-carbon unit donor in fatty acid synthesis</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/HMG-CoA" target="_blank" style="color: inherit; text-decoration: none;">HMG-CoA</a>
+                        </div>
+                        <div class="molecule-description">Branch point for cholesterol synthesis and ketone body formation</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🧬 Nucleic Acid Synthesis Related</h2>
+                <div class="molecule-grid">
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Deoxyuridine_monophosphate" target="_blank" style="color: inherit; text-decoration: none;">dUMP</a>
+                        </div>
+                        <div class="molecule-description">Substrate for thymidylate synthesis</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Deoxythymidine_monophosphate" target="_blank" style="color: inherit; text-decoration: none;">dTMP</a>
+                        </div>
+                        <div class="molecule-description">Nucleotide for DNA synthesis</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Deoxyadenosine_triphosphate" target="_blank" style="color: inherit; text-decoration: none;">dATP</a>
+                        </div>
+                        <div class="molecule-description">Energy and nucleotide source for DNA synthesis</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Cytidine_diphosphate" target="_blank" style="color: inherit; text-decoration: none;">CDP</a>
+                        </div>
+                        <div class="molecule-description">Nucleotide for phospholipid synthesis</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Uridine_diphosphate" target="_blank" style="color: inherit; text-decoration: none;">UDP</a>
+                        </div>
+                        <div class="molecule-description">Nucleotide for glycogen and glycolipid synthesis</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Deoxycytidine_triphosphate" target="_blank" style="color: inherit; text-decoration: none;">dCTP</a>
+                        </div>
+                        <div class="molecule-description">Nucleotide for DNA synthesis</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>⚡ Oxidative Phosphorylation Related</h2>
+                <div class="molecule-grid">
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Ubiquinone" target="_blank" style="color: inherit; text-decoration: none;">Ubiquinone</a>
+                        </div>
+                        <div class="molecule-description">Mobile electron carrier in electron transport chain</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Cytochrome_c" target="_blank" style="color: inherit; text-decoration: none;">Cytochrome c</a>
+                        </div>
+                        <div class="molecule-description">Electron carrier between complexes III and IV</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/ATP_synthase" target="_blank" style="color: inherit; text-decoration: none;">ATP synthase</a>
+                        </div>
+                        <div class="molecule-description">Enzyme complex that synthesizes ATP using proton gradient</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Rotenone" target="_blank" style="color: inherit; text-decoration: none;">Rotenone</a>
+                        </div>
+                        <div class="molecule-description">Complex I inhibitor</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Antimycin_A" target="_blank" style="color: inherit; text-decoration: none;">Antimycin A</a>
+                        </div>
+                        <div class="molecule-description">Complex III inhibitor</div>
+                    </div>
+
+                    <div class="molecule-card">
+                        <div class="molecule-name">
+                            <i class="fas fa-atom"></i>
+                            <a href="https://en.wikipedia.org/wiki/Oligomycin" target="_blank" style="color: inherit; text-decoration: none;">Oligomycin</a>
+                        </div>
+                        <div class="molecule-description">ATP synthase inhibitor</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2025 Biochemistry Metabolism Network Visualization | Exploring the Molecular World of Life 🧬</p>
+        </footer>
+    </div>
+</body>
+</html>

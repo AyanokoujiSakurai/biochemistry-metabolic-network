@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enzyme Classes and Functions in Biochemistry Metabolism Network</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 60px 0;
+            color: white;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .section {
+            margin-bottom: 50px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .section:nth-child(2) { animation-delay: 0.4s; }
+        .section:nth-child(3) { animation-delay: 0.6s; }
+        .section:nth-child(4) { animation-delay: 0.8s; }
+        .section:nth-child(5) { animation-delay: 1.0s; }
+
+        .section h2 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .section h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            border-radius: 2px;
+        }
+
+        .molecule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .molecule-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .molecule-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+
+        .molecule-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            border-color: #667eea;
+        }
+
+        .molecule-name {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .molecule-name i {
+            margin-right: 10px;
+            color: #667eea;
+            display: inline-block;
+        }
+
+        .molecule-description {
+            color: #555;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .enzyme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .enzyme-card {
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid #28a745;
+            transition: all 0.3s ease;
+        }
+
+        .enzyme-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .enzyme-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .enzyme-name i {
+            margin-right: 8px;
+            color: #28a745;
+        }
+
+        .enzyme-function {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            color: white;
+            opacity: 0.8;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2em;
+            }
+
+            .main-content {
+                padding: 20px;
+                margin: 20px;
+            }
+
+            .molecule-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .enzyme-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section h2 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🧬 Enzyme Classes and Functions</h1>
+            <p>Exploring the catalytic enzymes that drive biochemical reactions and metabolic processes</p>
+        </header>
+
+        <main class="main-content">
+            <section class="section">
+                <h2>🧬 Major Enzyme Classes</h2>
+                <div class="enzyme-grid">
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Kinase" target="_blank" style="color: inherit; text-decoration: none;">Kinase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes transfer of phosphate groups from high-energy phosphate compounds like ATP to substrates</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Phosphatase" target="_blank" style="color: inherit; text-decoration: none;">Phosphatase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes hydrolysis of phosphate ester bonds, removing phosphate groups</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Transferase" target="_blank" style="color: inherit; text-decoration: none;">Transferase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes transfer of functional groups from donor to acceptor</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Hydrolase" target="_blank" style="color: inherit; text-decoration: none;">Hydrolase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes hydrolysis reactions of bonds</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Lyase" target="_blank" style="color: inherit; text-decoration: none;">Lyase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes cleavage reactions, generating double bonds</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Isomerase" target="_blank" style="color: inherit; text-decoration: none;">Isomerase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes intramolecular rearrangement reactions</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Ligase" target="_blank" style="color: inherit; text-decoration: none;">Ligase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes connection of two molecules through covalent bonds</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Oxidoreductase" target="_blank" style="color: inherit; text-decoration: none;">Oxidoreductase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes oxidation-reduction reactions</div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="section">
+                <h2>🔬 Glycolysis Enzymes</h2>
+                <div class="enzyme-grid">
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Hexokinase" target="_blank" style="color: inherit; text-decoration: none;">Hexokinase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes phosphorylation of glucose to glucose-6-phosphate</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Phosphoglucose_isomerase" target="_blank" style="color: inherit; text-decoration: none;">Phosphohexose isomerase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes isomerization of glucose-6-phosphate to fructose-6-phosphate</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Phosphofructokinase" target="_blank" style="color: inherit; text-decoration: none;">Phosphofructokinase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes phosphorylation of fructose-6-phosphate to fructose-1,6-bisphosphate</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Fructose-bisphosphate_aldolase" target="_blank" style="color: inherit; text-decoration: none;">Aldolase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes cleavage of fructose-1,6-bisphosphate into DHAP and G3P</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Triosephosphate_isomerase" target="_blank" style="color: inherit; text-decoration: none;">Triose phosphate isomerase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes interconversion of DHAP and glyceraldehyde-3-phosphate</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Glyceraldehyde_3-phosphate_dehydrogenase" target="_blank" style="color: inherit; text-decoration: none;">Glyceraldehyde 3-phosphate dehydrogenase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes oxidation and phosphorylation of glyceraldehyde-3-phosphate</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Phosphoglycerate_kinase" target="_blank" style="color: inherit; text-decoration: none;">Phosphoglycerate kinase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes transfer of phosphate from 1,3-BPG to ADP</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Phosphoglycerate_mutase" target="_blank" style="color: inherit; text-decoration: none;">Phosphoglycerate mutase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes conversion of 3-PG to 2-PG</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Enolase" target="_blank" style="color: inherit; text-decoration: none;">Enolase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes dehydration of 2-PG to PEP</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Pyruvate_kinase" target="_blank" style="color: inherit; text-decoration: none;">Pyruvate kinase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes transfer of phosphate from PEP to ADP, forming pyruvate</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>📈 TCA Cycle Enzymes</h2>
+                <div class="enzyme-grid">
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Citrate_synthase" target="_blank" style="color: inherit; text-decoration: none;">Citrate synthase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes condensation of acetyl-CoA and oxaloacetate to form citrate</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Aconitase" target="_blank" style="color: inherit; text-decoration: none;">Aconitase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes isomerization of citrate to isocitrate via cis-aconitate</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Isocitrate_dehydrogenase" target="_blank" style="color: inherit; text-decoration: none;">Isocitrate dehydrogenase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes oxidative decarboxylation of isocitrate to α-ketoglutarate</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Alpha-ketoglutarate_dehydrogenase" target="_blank" style="color: inherit; text-decoration: none;">α-Ketoglutarate dehydrogenase complex</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes oxidative decarboxylation of α-ketoglutarate to succinyl-CoA</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Succinate_dehydrogenase" target="_blank" style="color: inherit; text-decoration: none;">Succinate dehydrogenase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes oxidation of succinate to fumarate</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Fumarase" target="_blank" style="color: inherit; text-decoration: none;">Fumarase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes hydration of fumarate to malate</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Malate_dehydrogenase" target="_blank" style="color: inherit; text-decoration: none;">Malate dehydrogenase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes oxidation of malate to oxaloacetate</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🧬 Glycogen Metabolism Enzymes</h2>
+                <div class="enzyme-grid">
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Glycogen_phosphorylase" target="_blank" style="color: inherit; text-decoration: none;">Glycogen phosphorylase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes phosphorolytic cleavage of glycogen to glucose-1-phosphate</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Phosphoglucomutase" target="_blank" style="color: inherit; text-decoration: none;">Phosphoglucomutase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes conversion of glucose-1-phosphate to glucose-6-phosphate</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/UDP-glucose_pyrophosphorylase" target="_blank" style="color: inherit; text-decoration: none;">UDP-glucose pyrophosphorylase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes formation of UDP-glucose from glucose-1-phosphate and UTP</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Glycogen_synthase" target="_blank" style="color: inherit; text-decoration: none;">Glycogen synthase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes addition of glucose units to glycogen from UDP-glucose</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Phosphorylase_kinase" target="_blank" style="color: inherit; text-decoration: none;">Phosphorylase b kinase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes phosphorylation and activation of glycogen phosphorylase b</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Phosphoprotein_phosphatase" target="_blank" style="color: inherit; text-decoration: none;">Phosphorylase a phosphatase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes dephosphorylation and inactivation of glycogen phosphorylase a</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🌿 Photosynthesis Enzymes</h2>
+                <div class="enzyme-grid">
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/RuBisCO" target="_blank" style="color: inherit; text-decoration: none;">Rubisco</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes carboxylation of ribulose-1,5-bisphosphate in Calvin cycle</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Ferredoxin-NADP_reductase" target="_blank" style="color: inherit; text-decoration: none;">Fd:NADP+ oxidoreductase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes electron transfer from ferredoxin to NADP+ in photosynthesis</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Ferredoxin-NAD_reductase" target="_blank" style="color: inherit; text-decoration: none;">Fd-NAD reductase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes electron transfer from ferredoxin to NAD+ in some photosynthetic bacteria</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🧪 Pentose Phosphate Pathway Enzymes</h2>
+                <div class="enzyme-grid">
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Glucose_6-phosphatase" target="_blank" style="color: inherit; text-decoration: none;">Glucose 6-phosphatase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes hydrolysis of glucose-6-phosphate to glucose and phosphate</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Transaldolase" target="_blank" style="color: inherit; text-decoration: none;">Transaldolase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes transfer of dihydroxyacetone group in pentose phosphate pathway</div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="section">
+                <h2>🔄 Amino Acid Metabolism Enzymes</h2>
+                <div class="enzyme-grid">
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Glutamate_dehydrogenase" target="_blank" style="color: inherit; text-decoration: none;">Glutamate dehydrogenase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes oxidative deamination of glutamate</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Glutamine_synthetase" target="_blank" style="color: inherit; text-decoration: none;">Glutamine synthetase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes synthesis of glutamine from glutamate and ammonia</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Glutaminase" target="_blank" style="color: inherit; text-decoration: none;">Glutaminase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes hydrolysis of glutamine to glutamate</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Aspartate_aminotransferase" target="_blank" style="color: inherit; text-decoration: none;">Aspartate aminotransferase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes transamination between aspartate and α-ketoglutarate</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Alanine_aminotransferase" target="_blank" style="color: inherit; text-decoration: none;">Alanine aminotransferase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes transamination between alanine and α-ketoglutarate</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Serine_hydroxymethyltransferase" target="_blank" style="color: inherit; text-decoration: none;">Serine hydroxymethyltransferase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes conversion of serine to glycine</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Asparaginase" target="_blank" style="color: inherit; text-decoration: none;">Asparaginase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes hydrolysis of asparagine to aspartate</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>💰 Nucleotide Metabolism Enzymes</h2>
+                <div class="enzyme-grid">
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Ribonucleotide_reductase" target="_blank" style="color: inherit; text-decoration: none;">Ribonucleotide reductase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes reduction of ribonucleotides to deoxyribonucleotides</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Thymidylate_synthase" target="_blank" style="color: inherit; text-decoration: none;">Thymidylate synthase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes methylation of dUMP to dTMP</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Nucleoside-diphosphate_kinase" target="_blank" style="color: inherit; text-decoration: none;">Nucleoside diphosphate kinase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes transfer of phosphate between nucleoside diphosphates</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Carbamoyl_phosphate_synthetase_I" target="_blank" style="color: inherit; text-decoration: none;">Carbamoyl phosphate synthetase I</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes synthesis of carbamoyl phosphate from ammonia and bicarbonate</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Ornithine_transcarbamylase" target="_blank" style="color: inherit; text-decoration: none;">Ornithine transcarbamoylase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes transfer of carbamoyl group from carbamoyl phosphate to ornithine</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Argininosuccinate_synthetase" target="_blank" style="color: inherit; text-decoration: none;">Argininosuccinate synthetase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes condensation of citrulline with aspartate</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Adenylosuccinate_lyase" target="_blank" style="color: inherit; text-decoration: none;">Adenylosuccinate lyase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes elimination of fumarate from adenylosuccinate</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Adenosine_deaminase" target="_blank" style="color: inherit; text-decoration: none;">Adenosine deaminase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes deamination of adenosine to inosine</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🍶 Alcohol Metabolism Enzymes</h2>
+                <div class="enzyme-grid">
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Alcohol_dehydrogenase" target="_blank" style="color: inherit; text-decoration: none;">Alcohol dehydrogenase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes oxidation of alcohols to aldehydes</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Pyruvate_decarboxylase" target="_blank" style="color: inherit; text-decoration: none;">Pyruvate decarboxylase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes decarboxylation of pyruvate to acetaldehyde</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🧴 Fatty Acid Metabolism Enzymes</h2>
+                <div class="enzyme-grid">
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Long-chain_fatty_acid-CoA_ligase" target="_blank" style="color: inherit; text-decoration: none;">Fatty acyl-CoA synthetase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes activation of fatty acids to fatty acyl-CoA</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Acyl-CoA_dehydrogenase" target="_blank" style="color: inherit; text-decoration: none;">Acyl-CoA dehydrogenase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes first step of fatty acid β-oxidation</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Enoyl-CoA_hydratase" target="_blank" style="color: inherit; text-decoration: none;">Enoyl-CoA hydratase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes hydration of trans-enoyl-CoA in β-oxidation</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/3-Hydroxyacyl-CoA_dehydrogenase" target="_blank" style="color: inherit; text-decoration: none;">β-hydroxyacyl-CoA dehydrogenase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes oxidation of 3-hydroxyacyl-CoA in β-oxidation</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Thiolase" target="_blank" style="color: inherit; text-decoration: none;">Thiolase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes thiolytic cleavage of 3-ketoacyl-CoA in β-oxidation</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Acetyl-CoA_carboxylase" target="_blank" style="color: inherit; text-decoration: none;">Acetyl-CoA carboxylase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes carboxylation of acetyl-CoA in fatty acid synthesis</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Methylmalonyl-CoA_mutase" target="_blank" style="color: inherit; text-decoration: none;">Methylmalonyl-CoA mutase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes isomerization of methylmalonyl-CoA to succinyl-CoA</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>💊 Cholesterol Metabolism Enzymes</h2>
+                <div class="enzyme-grid">
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/HMG-CoA_synthase" target="_blank" style="color: inherit; text-decoration: none;">HMG-CoA synthase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes condensation of acetoacetyl-CoA and acetyl-CoA</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/HMG-CoA_reductase" target="_blank" style="color: inherit; text-decoration: none;">HMG-CoA reductase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes rate-limiting step in cholesterol biosynthesis</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/HMG-CoA_lyase" target="_blank" style="color: inherit; text-decoration: none;">HMG-CoA lyase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes cleavage of HMG-CoA to acetoacetate and acetyl-CoA</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>⚡ Oxidative Phosphorylation Enzymes</h2>
+                <div class="enzyme-grid">
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/NADH_dehydrogenase" target="_blank" style="color: inherit; text-decoration: none;">NADH-Q reductase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes electron transfer from NADH to ubiquinone in Complex I</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Succinate_dehydrogenase" target="_blank" style="color: inherit; text-decoration: none;">Succinate dehydrogenase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes oxidation of succinate to fumarate in Complex II</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Coenzyme_Q_cytochrome_c_reductase" target="_blank" style="color: inherit; text-decoration: none;">Cytochrome c reductase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes electron transfer in Complex III of the electron transport chain</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/Cytochrome_c_oxidase" target="_blank" style="color: inherit; text-decoration: none;">Cytochrome oxidase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes the final step of electron transfer in Complex IV</div>
+                    </div>
+
+                    <div class="enzyme-card">
+                        <div class="enzyme-name">
+                            <i class="fas fa-cogs"></i>
+                            <a href="https://en.wikipedia.org/wiki/ATP_synthase" target="_blank" style="color: inherit; text-decoration: none;">ATP synthase</a>
+                        </div>
+                        <div class="enzyme-function">Catalyzes ATP synthesis using proton gradient in Complex V</div>
+                    </div>
+                </div>
+            </section>
+
+            
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2025 Biochemistry Metabolism Network Visualization | Exploring the Molecular World of Life 🧬</p>
+        </footer>
+    </div>
+</body>
+</html>
