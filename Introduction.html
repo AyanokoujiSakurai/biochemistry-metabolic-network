@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metapoly | Strategy Card Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(90deg, #1565c0 0%, #0d47a1 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tagline {
+            font-size: 1.3rem;
+            font-weight: 400;
+            opacity: 0.95;
+            margin-bottom: 20px;
+            color: #e3f2fd;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            font-weight: 400;
+            color: #e3f2fd;
+            line-height: 1.7;
+        }
+        
+        .game-stats {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .stat {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 500;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+        
+        main {
+            padding: 40px 30px;
+        }
+        
+        section {
+            margin-bottom: 50px;
+        }
+        
+        h2 {
+            color: #0d47a1;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #42a5f5;
+            display: inline-block;
+        }
+        
+        p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            color: #37474f;
+        }
+        
+        .highlight {
+            background-color: #e8f4fd;
+            padding: 30px;
+            border-radius: 10px;
+            border-left: 5px solid #42a5f5;
+            margin: 30px 0;
+            box-shadow: 0 4px 12px rgba(66, 165, 245, 0.1);
+        }
+        
+        .highlight h3 {
+            color: #1565c0;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .highlight p {
+            color: #37474f;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .feature {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-top: 4px solid #42a5f5;
+        }
+        
+        .feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature h3 {
+            color: #1565c0;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .feature p {
+            color: #455a64;
+        }
+        
+        .feature-icon {
+            background-color: #1565c0;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(21, 101, 192, 0.3);
+        }
+        
+        .audience {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .audience-item {
+            background-color: #e3f2fd;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-weight: 500;
+            color: #1565c0;
+            border: 1px solid #bbdefb;
+        }
+        
+        footer {
+            background-color: #0d47a1;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 40px;
+        }
+        
+        .final-tagline {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #bbdefb;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        footer p {
+            color: #e3f2fd;
+            max-width: 800px;
+            margin: 0 auto 15px;
+        }
+        
+        .disclaimer {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 20px;
+            color: #bbdefb;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            header {
+                padding: 30px 20px;
+            }
+            
+            .logo {
+                font-size: 2.2rem;
+            }
+            
+            main {
+                padding: 30px 20px;
+            }
+            
+            .game-stats {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .audience {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">Metapoly</div>
+            <div class="tagline">The Biochemical Strategy Game</div>
+            <p class="subtitle">Build, balance, and optimize your cellular metabolism in this unique strategy card game that combines science with engaging gameplay.</p>
+            
+            <div class="game-stats">
+                <div class="stat">2-4 Players</div>
+                <div class="stat">45-60 Minutes</div>
+                <div class="stat">Ages 14+</div>
+                <div class="stat">Strategy & Education</div>
+            </div>
+        </header>
+        
+        <main>
+            <section>
+                <h2>Game Overview</h2>
+                <p>Metapoly is an engaging strategy card game that combines resource management with deep biological simulation. Designed for 2–4 players, each 45–60 minute session challenges you to build and regulate a living metabolic network within your cells.</p>
+                
+                <div class="highlight">
+                    <h3>Core Concept</h3>
+                    <p>Step into the microscopic world of cellular metabolism. Manage resources like Glucose, ATP, Amino Acids, and Fatty Acids, activate enzymes, respond to hormones, and adapt to physiological states—all while competing to become the most efficient metabolic architect.</p>
+                </div>
+            </section>
+            
+            <section>
+                <h2>Game Goal</h2>
+                <p>Your mission is to accumulate the most ATP and complete anabolic objectives by constructing an optimized metabolic network across different cell types. Balance energy production, storage, and conversion while reacting to dynamic in-game conditions such as fasting, exercise, and disease states.</p>
+            </section>
+            
+            <section>
+                <h2>Why You'll Love It</h2>
+                <div class="features">
+                    <div class="feature">
+                        <div class="feature-icon">⚗️</div>
+                        <h3>Strategy Meets Science</h3>
+                        <p>A true blend of tactical card play and real biochemistry. Every decision reflects actual metabolic processes.</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <div class="feature-icon">🎓</div>
+                        <h3>Educational & Engaging</h3>
+                        <p>Learn metabolism through play—enzymes, hormones, and pathways come to life in an interactive format.</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <div class="feature-icon">♻️</div>
+                        <h3>Dynamic Gameplay</h3>
+                        <p>Every game is different with randomized draws, multiple cell types, and evolving physiological states.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section>
+                <h2>Perfect For</h2>
+                <p>Whether you're a science enthusiast, a student, an educator, or a board game lover, Metapoly offers something for everyone:</p>
+                
+                <div class="audience">
+                    <div class="audience-item">Science Enthusiasts</div>
+                    <div class="audience-item">Students & Educators</div>
+                    <div class="audience-item">Board Gamers</div>
+                    <div class="audience-item">Strategy Lovers</div>
+                    <div class="audience-item">Families & Friends</div>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <div class="final-tagline">Build. Balance. Outperform.</div>
+            <p>Master the chemistry in this innovative strategy game that brings cellular metabolism to your tabletop.</p>
+            <p class="disclaimer">Metapoly is currently in prototype stage. Follow us for updates on production and release!</p>
+        </footer>
+    </div>
+</body>
+</html>

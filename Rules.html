@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metapoly Game Rules</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Navigation bar styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100vw;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+            position: relative;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 25px;
+            margin-left: auto;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .nav-brand i {
+            margin-right: 10px;
+            color: #ff6b6b;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: #ff6b6b;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .nav-toggle span {
+            width: 25px;
+            height: 3px;
+            background: #2c3e50;
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+
+        .header {
+            text-align: center;
+            padding: 60px 0;
+            color: white;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .section {
+            margin-bottom: 50px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .section:nth-child(2) { animation-delay: 0.4s; }
+        .section:nth-child(3) { animation-delay: 0.6s; }
+        .section:nth-child(4) { animation-delay: 0.8s; }
+        .section:nth-child(5) { animation-delay: 1.0s; }
+        .section:nth-child(6) { animation-delay: 1.2s; }
+        .section:nth-child(7) { animation-delay: 1.4s; }
+
+        .section h2 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .section h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            border-radius: 2px;
+        }
+
+        .section h3 {
+            color: #1976d2;
+            font-size: 1.4rem;
+            margin: 30px 0 15px 0;
+            padding-left: 15px;
+            border-left: 4px solid #42a5f5;
+        }
+
+        p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            color: #37474f;
+            line-height: 1.7;
+        }
+
+        ul, ol {
+            margin-bottom: 20px;
+            padding-left: 30px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            color: #37474f;
+        }
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(102,126,234,0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .highlight-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(102,126,234,0.4);
+        }
+
+        .highlight-box h3 {
+            font-size: 1.4em;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .highlight-box p {
+            font-size: 0.9em;
+            color: white;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        tr:hover {
+            background-color: #e8f4fd;
+            transition: background-color 0.3s ease;
+        }
+
+        .code-inline {
+            background-color: #f1f3f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #d32f2f;
+        }
+
+        .phase-box {
+            background-color: #fff3e0;
+            border: 2px solid #ffb74d;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .phase-box::before {
+            content: '🎯';
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: white;
+            padding: 5px;
+            border-radius: 50%;
+            border: 2px solid #ffb74d;
+        }
+
+        .phase-title {
+            color: #f57c00;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .action-list {
+            margin-left: 20px;
+        }
+
+        .action-item {
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #4caf50;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .action-title {
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 8px;
+        }
+
+        .requirements {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+        }
+
+        .yield {
+            color: #1976d2;
+            font-weight: 500;
+        }
+
+        footer {
+            background-color: #0d47a1;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        .final-tagline {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #bbdefb;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        footer p {
+            color: #e3f2fd;
+            max-width: 800px;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2em;
+            }
+
+            .main-content {
+                padding: 20px;
+                margin: 20px;
+            }
+
+            .section h2 {
+                font-size: 2em;
+            }
+
+            .nav-menu {
+                padding: 15px;
+            }
+
+            .nav-menu {
+                position: static;
+                transform: none;
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .nav-link {
+                font-size: 0.9rem;
+            }
+
+            .overview-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
+            .highlight-box {
+                padding: 15px;
+            }
+
+            .highlight-box h3 {
+                font-size: 1.1em;
+                color: white;
+            }
+
+            .highlight-box p {
+                font-size: 0.85em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1> Metapoly Game Rules</h1>
+            <p>Complete guide to the biochemistry strategy card game</p>
+        </header>
+
+        <!-- 导航栏 -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <i class="fas fa-dna"></i>
+                    <span>Metapoly Game Rules</span>
+                </div>
+                <div class="nav-menu">
+                    <a href="#overview" class="nav-link">Overview</a>
+                    <a href="#components" class="nav-link">Components</a>
+                    <a href="#setup" class="nav-link">Setup</a>
+                    <a href="#turn-sequence" class="nav-link">Turns</a>
+                    <a href="#regulation" class="nav-link">Regulation</a>
+                    <a href="#end-conditions" class="nav-link">End</a>
+                </div>
+                <div class="nav-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <section class="section">
+                <h2 id="overview">Ⅰ. Game Overview</h2>
+
+                <div class="overview-grid">
+                    <div class="highlight-box">
+                        <h3>Game Type</h3>
+                        <p>Strategy Card Game, Resource Management</p>
+                    </div>
+
+                    <div class="highlight-box">
+                        <h3>Number of Players</h3>
+                        <p>2-4</p>
+                    </div>
+
+                    <div class="highlight-box">
+                        <h3>Game Duration</h3>
+                        <p>45-60 minutes</p>
+                    </div>
+
+                    <div class="highlight-box">
+                        <h3>Game Objective</h3>
+                        <p>Accumulate the most ATP and complete anabolic objectives by building an efficient metabolic network within a specified number of turns.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Ⅱ. Educational Objectives</h2>
+
+            <p>This game aims to help players understand through an interactive board game format:</p>
+
+            <ol>
+                <li>The interconnections among carbohydrate, lipid, amino acid, and nucleotide metabolism.</li>
+                <li>The central role of enzymes in metabolic regulation.</li>
+                <li>Hormonal and energetic state regulation of metabolism.</li>
+                <li>Metabolic division of labor among different cell types.</li>
+                <li>Metabolic disorders under pathological conditions.</li>
+            </ol>
+            </section>
+
+            <section class="section">
+                <h2 id="components">Ⅲ. Game Components</h2>
+
+            <h3>1. Cell Cards (Each player starts with 1 Hepatocyte)</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cell Type</th>
+                        <th>Synthesis Requirements</th>
+                        <th>Special Ability</th>
+                        <th>Metabolic Functions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Hepatocyte</strong></td>
+                        <td>Initially owned</td>
+                        <td>Metabolic Hub</td>
+                        <td>Glycolysis, Gluconeogenesis, Glycogen Metabolism, Fatty Acid Metabolism, Ketogenesis, Amino Acid Metabolism</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Myocyte</strong></td>
+                        <td>2 Nucleotides + 3 Amino Acids</td>
+                        <td>+1 Action Point per turn for each owned</td>
+                        <td>Glycolysis, Glycogenolysis, Anaerobic Respiration, Aerobic Respiration</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Adipocyte</strong></td>
+                        <td>1 Nucleotide + 2 Amino Acids</td>
+                        <td>Unlimited fat storage</td>
+                        <td>Fat Synthesis and Breakdown</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Brain Cell</strong></td>
+                        <td>3 Nucleotides + 3 Amino Acids</td>
+                        <td>May spend 1 Action Point per turn to draw 1 Skill card</td>
+                        <td>Ketone Body Metabolism, Glucose Metabolism</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Pancreatic Islet Cell</strong></td>
+                        <td>2 Nucleotides + 2 Amino Acids</td>
+                        <td>Hormone Synthesis Center</td>
+                        <td>Synthesize Insulin, Glucagon</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>2. Metabolite Cards (150 total)</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Name</th>
+                        <th>Quantity</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Carbohydrates</strong></td>
+                        <td>Glucose</td>
+                        <td>30</td>
+                        <td>Must be discarded if unused by end of turn</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>Glycogen</td>
+                        <td>15</td>
+                        <td>Can be stored, synthesized from Glucose</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Lipids</strong></td>
+                        <td>Acetyl-CoA</td>
+                        <td>20</td>
+                        <td>Central Metabolic Molecule</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>Ketone Bodies</td>
+                        <td>10</td>
+                        <td>Produced during fasting</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>Fat</td>
+                        <td>15</td>
+                        <td>Energy Storage</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Amino Acids</strong></td>
+                        <td>Amino Acids</td>
+                        <td>25</td>
+                        <td>Generic amino acids, used for synthesis</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Nucleotides</strong></td>
+                        <td>Nucleotides</td>
+                        <td>20</td>
+                        <td>Used for cell and nucleic acid synthesis</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Intermediates</strong></td>
+                        <td>Pyruvate</td>
+                        <td>15</td>
+                        <td>Glycolysis product</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>Lactate</td>
+                        <td>10</td>
+                        <td>Anaerobic respiration product</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Energy Currency</strong></td>
+                        <td>ATP</td>
+                        <td>10</td>
+                        <td>Starting resource, also produced via metabolism</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>3. Enzyme Cards (Key Enzyme Systems, 40 total)</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Metabolic Pathway</th>
+                        <th>Key Enzyme</th>
+                        <th>Effect</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td rowspan="3"><strong>Glycolysis</strong></td>
+                        <td>Hexokinase</td>
+                        <td>Glycolysis ATP yield +1</td>
+                        <td>3 turns</td>
+                    </tr>
+                    <tr>
+                        <td>Phosphofructokinase-1</td>
+                        <td>Glycolysis speed doubled</td>
+                        <td>3 turns</td>
+                    </tr>
+                    <tr>
+                        <td>Pyruvate Kinase</td>
+                        <td>Glycolysis costs 0 Action Points</td>
+                        <td>1 turn</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Pyruvate Metabolism</strong></td>
+                        <td>Pyruvate Dehydrogenase Complex</td>
+                        <td>Pyruvate→Acetyl-CoA ATP yield +2</td>
+                        <td>3 turns</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="3"><strong>TCA Cycle</strong></td>
+                        <td>Citrate Synthase</td>
+                        <td>TCA Cycle ATP yield +3</td>
+                        <td>3 turns</td>
+                    </tr>
+                    <tr>
+                        <td>Isocitrate Dehydrogenase</td>
+                        <td>TCA Cycle speed doubled</td>
+                        <td>3 turns</td>
+                    </tr>
+                    <tr>
+                        <td>α-Ketoglutarate Dehydrogenase</td>
+                        <td>All TCA Cycle products doubled</td>
+                        <td>2 turns</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2"><strong>Glycogen Metabolism</strong></td>
+                        <td>Glycogen Synthase</td>
+                        <td>Glycogen synthesis cost -1 Glucose</td>
+                        <td>3 turns</td>
+                    </tr>
+                    <tr>
+                        <td>Glycogen Phosphorylase</td>
+                        <td>Glycogen breakdown ATP +2</td>
+                        <td>3 turns</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2"><strong>Fat Metabolism</strong></td>
+                        <td>Acetyl-CoA Carboxylase</td>
+                        <td>Fat synthesis cost -1 Acetyl-CoA</td>
+                        <td>3 turns</td>
+                    </tr>
+                    <tr>
+                        <td>Carnitine Palmitoyltransferase I</td>
+                        <td>Fat breakdown Acetyl-CoA yield +1</td>
+                        <td>3 turns</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2"><strong>Amino Acid Metabolism</strong></td>
+                        <td>Transaminase</td>
+                        <td>Amino acid synthesis costs 0 Pyruvate</td>
+                        <td>3 turns</td>
+                    </tr>
+                    <tr>
+                        <td>Glutamate Dehydrogenase</td>
+                        <td>Amino acid breakdown ATP +2</td>
+                        <td>2 turns</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>4. Hormone Cards (30 total)</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Hormone</th>
+                        <th>Synthesis Requirement</th>
+                        <th>Effect</th>
+                        <th>Scope</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Insulin</strong></td>
+                        <td>Pancreatic Islet Cell + 2 Amino Acids</td>
+                        <td>Promotes anabolism: Glycolysis, Glycogen synthesis, Fat synthesis efficiency +50%</td>
+                        <td>Self</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Glucagon</strong></td>
+                        <td>Pancreatic Islet Cell + 2 Amino Acids</td>
+                        <td>Promotes catabolism: Glycogenolysis, Gluconeogenesis, Fat breakdown efficiency +50%</td>
+                        <td>Self</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Adrenaline</strong></td>
+                        <td>Automatically gained under stress</td>
+                        <td>Glycogen breakdown ATP yield doubled, Fat breakdown accelerated</td>
+                        <td>Self</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cortisol</strong></td>
+                        <td>Gained after 3 turns of fasting</td>
+                        <td>Promotes Gluconeogenesis and Fat breakdown, inhibits Glucose utilization</td>
+                        <td>Self</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>5. State Cards (Environment & Diseases, 20 total)</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>State</th>
+                        <th>Trigger Condition / Effect</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Fasting</strong></td>
+                        <td>Skip Draw Phase, gain 1 Ketone Body per turn</td>
+                        <td>3 turns</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Diabetes (Type 1)</strong></td>
+                        <td>Impaired insulin synthesis, Glucose utilization efficiency -50%</td>
+                        <td>Permanent (Treatable)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Diabetes (Type 2)</strong></td>
+                        <td>Insulin resistance, Insulin effect -50%</td>
+                        <td>Permanent (Manageable)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Hypoxia</strong></td>
+                        <td>Aerobic respiration stops, Anaerobic respiration ATP yield +2</td>
+                        <td>2 turns</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Alcohol Consumption</strong></td>
+                        <td>Hepatocyte metabolism cost +2 ATP/turn, inhibits Gluconeogenesis</td>
+                        <td>3 turns</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Exercise</strong></td>
+                        <td>Myocyte metabolism efficiency +50%, Glucose consumption +1</td>
+                        <td>2 turns</td>
+                    </tr>
+                    <tr>
+                        <td><strong>High-Fat Diet</strong></td>
+                        <td>Start with 3 Fat, but Glucose metabolism efficiency -50%</td>
+                        <td>3 turns</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>6. Synthesis Objective Cards (15 total)</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Objective Type</th>
+                        <th>Requirement</th>
+                        <th>ATP Reward</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Protein Synthesis</strong></td>
+                        <td>Synthesize 5 Cells</td>
+                        <td>15 ATP</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Storage Master</strong></td>
+                        <td>Own 10 Fat or 5 Glycogen</td>
+                        <td>20 ATP</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Metabolism Expert</strong></td>
+                        <td>Activate 5 different key enzymes</td>
+                        <td>12 ATP</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Hormonal Regulation</strong></td>
+                        <td>Simultaneously have Insulin and Glucagon effects active</td>
+                        <td>10 ATP</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Omni-Metabolism</strong></td>
+                        <td>Perform carbohydrate, lipid, and amino acid metabolism in the same turn</td>
+                        <td>25 ATP</td>
+                    </tr>
+                </tbody>
+            </table>
+            </section>
+
+            <section class="section">
+                <h2 id="setup">Ⅳ. Game Setup</h2>
+
+            <ol>
+                <li>
+                    <strong>Preparation</strong>:
+                    <ul>
+                        <li>Each player receives:
+                            <ul>
+                                <li>1 Hepatocyte card (placed in front)</li>
+                                <li>3 Glucose cards</li>
+                                <li>5 ATP tokens</li>
+                                <li>2 random Amino Acid cards</li>
+                            </ul>
+                        </li>
+                        <li>Shuffle all decks (Metabolite, Enzyme, Hormone, State, Objective)</li>
+                        <li>Place decks in the common area</li>
+                        <li>Determine the starting player (player with the least ATP goes first)</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Game Board</strong>
+                    <ul>
+                        <li>Central board displays a metabolic pathway map</li>
+                        <li>Four zones: Cell Zone, Metabolic Zone, Enzyme Activation Zone, State Zone</li>
+                    </ul>
+                </li>
+            </ol>
+            </section>
+
+            <section class="section">
+                <h2 id="turn-sequence">Ⅴ. Game Turn Sequence</h2>
+
+            <p>Each turn proceeds through the following phases:</p>
+
+            <div class="phase-box">
+                <div class="phase-title">Phase 1: State Update (Simultaneous)</div>
+                <ul class="action-list">
+                    <li>Check and apply State card effects</li>
+                    <li>Remove expired Enzyme/Hormone effects</li>
+                    <li>Pay maintenance costs (1 ATP per cell)</li>
+                </ul>
+            </div>
+
+            <div class="phase-box">
+                <div class="phase-title">Phase 2: Draw Phase</div>
+                <ul class="action-list">
+                    <li>Draw 3 cards from the Metabolite deck</li>
+                    <li>Brain Cell extra ability: May spend 1 Action Point to draw 1 Skill card (Enzyme/Hormone/State)</li>
+                </ul>
+            </div>
+
+            <div class="phase-box">
+                <div class="phase-title">Phase 3: Action Phase (Core Phase)</div>
+                <p>Each player has a base of 3 Action Points, plus +1 Action Point for each owned Myocyte. Players need to follow the Available Actions below: (Each costs 1 Action Point)</p>
+
+                <h3>A. Metabolic Reactions</h3>
+
+                <div class="action-item">
+                    <div class="action-title">1. Glycolysis (Hepatocyte, Myocyte, Brain Cell)</div>
+                    <div class="requirements">Cost: 1 Glucose + Hexokinase (optional)</div>
+                    <div class="yield">Yield: 2 ATP + 1 Pyruvate</div>
+                    <div class="requirements">With Phosphofructokinase-1: Additional +1 ATP</div>
+                </div>
+
+                <div class="action-item">
+                    <div class="action-title">2. Pyruvate Dehydrogenation (Requires Mitochondria, Hepatocyte, Myocyte)</div>
+                    <div class="requirements">Cost: 1 Pyruvate</div>
+                    <div class="yield">Yield: 1 Acetyl-CoA + 1 ATP (with enzyme: +2 ATP)</div>
+                </div>
+
+                <div class="action-item">
+                    <div class="action-title">3. TCA Cycle (Requires Mitochondria)</div>
+                    <div class="requirements">Cost: 1 Acetyl-CoA</div>
+                    <div class="yield">Yield: 10 ATP (simplified value, actual 10+)</div>
+                    <div class="requirements">With Citrate Synthase: +3 ATP</div>
+                </div>
+
+                <div class="action-item">
+                    <div class="action-title">4. Anaerobic Respiration (Myocyte)</div>
+                    <div class="requirements">Cost: 1 Pyruvate</div>
+                    <div class="yield">Yield: 1 Lactate + 1 ATP</div>
+                    <div class="requirements">Under Hypoxia: +2 ATP</div>
+                </div>
+
+                <div class="action-item">
+                    <div class="action-title">5. Glycogen Synthesis (Hepatocyte)</div>
+                    <div class="requirements">Cost: 2 Glucose</div>
+                    <div class="yield">Yield: 1 Glycogen</div>
+                    <div class="requirements">With Glycogen Synthase: Only 1 Glucose required</div>
+                </div>
+
+                <div class="action-item">
+                    <div class="action-title">6. Glycogen Breakdown (Hepatocyte→Glucose; Myocyte→ATP)</div>
+                    <div class="requirements">Hepatocyte: Cost 1 Glycogen → 6 Glucose</div>
+                    <div class="yield">Myocyte: Cost 1 Glycogen → 6 ATP</div>
+                    <div class="requirements">With Glycogen Phosphorylase: +2 ATP or +2 Glucose</div>
+                </div>
+
+                <div class="action-item">
+                    <div class="action-title">7. Gluconeogenesis (Hepatocyte)</div>
+                    <div class="requirements">Cost: 2 Pyruvate + 4 ATP</div>
+                    <div class="yield">Yield: 1 Glucose</div>
+                    <div class="requirements">Under Fasting: Cost -1 ATP</div>
+                </div>
+
+                <div class="action-item">
+                    <div class="action-title">8. Fat Synthesis (Hepatocyte, Adipocyte)</div>
+                    <div class="requirements">Cost: 3 Acetyl-CoA + 2 ATP</div>
+                    <div class="yield">Yield: 1 Fat</div>
+                    <div class="requirements">With Acetyl-CoA Carboxylase: Only 2 Acetyl-CoA required</div>
+                </div>
+
+                <div class="action-item">
+                    <div class="action-title">9. Fat Breakdown (Adipocyte, Myocyte)</div>
+                    <div class="requirements">Cost: 1 Fat</div>
+                    <div class="yield">Yield: 3 Acetyl-CoA</div>
+                    <div class="requirements">With Carnitine Palmitoyltransferase I: +1 Acetyl-CoA</div>
+                </div>
+
+                <div class="action-item">
+                    <div class="action-title">10. Ketogenesis (Hepatocyte, occurs automatically during Fasting)</div>
+                    <div class="requirements">Cost: 2 Acetyl-CoA</div>
+                    <div class="yield">Yield: 1 Ketone Body</div>
+                </div>
+
+                <div class="action-item">
+                    <div class="action-title">11. Ketone Body Metabolism (Brain Cell, Myocyte)</div>
+                    <div class="requirements">Cost: 1 Ketone Body</div>
+                    <div class="yield">Yield: 2 Acetyl-CoA</div>
+                </div>
+
+                <div class="action-item">
+                    <div class="action-title">12. Amino Acid Synthesis (All Cells)</div>
+                    <div class="requirements">Cost: 1 Pyruvate + 1 ATP</div>
+                    <div class="yield">Yield: 2 Amino Acids (Transamination)</div>
+                    <div class="requirements">With Transaminase: Costs 0 Pyruvate</div>
+                </div>
+
+                <div class="action-item">
+                    <div class="action-title">13. Amino Acid Breakdown (Hepatocyte)</div>
+                    <div class="requirements">Glucogenic Amino Acids: 2 Amino Acids → 1 Glucose + 1 ATP</div>
+                    <div class="yield">Ketogenic Amino Acids: 2 Amino Acids → 1 Acetyl-CoA + 1 ATP</div>
+                </div>
+
+                <div class="action-item">
+                    <div class="action-title">14. Nucleotide Synthesis (All Cells)</div>
+                    <div class="requirements">Cost: 1 Glucose + 2 Amino Acids + 3 ATP</div>
+                    <div class="yield">Yield: 1 Nucleotide</div>
+                </div>
+
+                <h3>B. Cell Proliferation and Differentiation</h3>
+                <ul>
+                    <li>Synthesizing a new cell requires fulfilling its metabolite requirements and spending corresponding Action Points</li>
+                    <li>Place the new Cell card in front of you, immediately gaining its special ability</li>
+                </ul>
+
+                <h3>C. Enzyme and Hormone Activation</h3>
+                <ul>
+                    <li>When using an Enzyme card, place in Activation Zone, effect lasts for its duration</li>
+                    <li>Pancreatic Islet Cell spends 2 Amino Acids to synthesize Insulin/Glucagon</li>
+                    <li>Effect triggers immediately, lasts 3 turns</li>
+                </ul>
+
+                <h3>D. Special Actions</h3>
+                <div class="action-item">
+                    <div class="action-title">1. Cori Cycle (Hepatocyte + Myocyte cooperation is needed)</div>
+                    <div class="requirements">Transport 1 Lactate from Myocyte to Hepatocyte</div>
+                    <div class="requirements">Hepatocyte spends 2 ATP to convert it into 1 Glucose</div>
+                </div>
+
+                <div class="action-item">
+                    <div class="action-title">2. Storage and Retrieval</div>
+                    <div class="requirements">Store metabolites in Adipocyte (unlimited capacity)</div>
+                    <div class="requirements">Retrieve stored substances (costs Action Points)</div>
+                </div>
+            </div>
+
+            <div class="phase-box">
+                <div class="phase-title">Phase 4: Cleanup Phase</div>
+                <ol class="action-list">
+                    <li>Discard unused Glucose cards (for its inability to store)</li>
+                    <li>Hand limit is 10 cards, discard any excess</li>
+                    <li>Remove expired State cards</li>
+                </ol>
+            </div>
+
+            <div class="phase-box">
+                <div class="phase-title">Phase 5: Check Synthesis Objectives</div>
+                <ul class="action-list">
+                    <li>Check if requirements of Synthesis Objective cards are met</li>
+                    <li>Upon completion, claim ATP reward, may draw a new objective</li>
+                </ul>
+            </div>
+            </section>
+
+            <section class="section">
+                <h2 id="regulation">Ⅵ. Metabolic Regulation Mechanisms</h2>
+
+            <h3>1. Feedback Regulation of Energy State</h3>
+            <ul>
+                <li><strong>High-Energy State</strong> (ATP>15): Inhibits catabolism, promotes anabolism</li>
+                <li><strong>Low-Energy State</strong> (ATP&lt;5): Promotes catabolism, inhibits anabolism</li>
+                <li>Manifested as reduced costs/increased yields for certain reactions under low-energy state</li>
+            </ul>
+
+            <h3>2. Hormonal Hierarchy Regulation</h3>
+            <p><strong>High Insulin levels</strong> → Activates Glycolysis, Glycogen synthesis, Fat synthesis enzymes</p>
+            <p><strong>High Glucagon levels</strong> → Activates Glycogenolysis, Gluconeogenesis, Fat breakdown enzymes</p>
+            <p><strong>Adrenaline</strong> → Emergency state, prioritizes Glycogenolysis activation</p>
+            <p><strong>Cortisol</strong> → Long-term stress, activates Gluconeogenesis and protein breakdown</p>
+            </section>
+
+            <section class="section">
+                <h2 id="end-conditions">Ⅶ. Game End Conditions</h2>
+
+            <ol>
+                <li>10 turns have passed, or</li>
+                <li>All Metabolite decks are exhausted</li>
+                <li>Compare all players' total ATP</li>
+            </ol>
+            </section>
+        </main>
+
+        <footer>
+            <div class="final-tagline">Master the Science of Metabolism</div>
+            <p>Learn biochemistry through strategic gameplay in this innovative educational card game.</p>
+            <p class="disclaimer">Metapoly - Where Science Meets Strategy 🎯</p>
+        </footer>
+    </div>
+</body>
+</html>
