@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Content - Biochemistry Photos</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+            padding-bottom: 80px;
+        }
+
+        /* Loading animation */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Navigation bar styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .nav-brand i {
+            margin-right: 10px;
+            color: #ff6b6b;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: #ff6b6b;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .nav-toggle span {
+            width: 25px;
+            height: 3px;
+            background: #2c3e50;
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            animation: fadeInUp 1s ease-out;
+            padding: 100px 0 60px 0;
+        }
+
+        .header h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #fff, #f0f8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .section {
+            margin-bottom: 50px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+
+        .section:nth-child(2) { animation-delay: 0.6s; }
+        .section:nth-child(3) { animation-delay: 0.9s; }
+        .section:nth-child(4) { animation-delay: 1.2s; }
+        .section:nth-child(5) { animation-delay: 1.5s; }
+
+        .section h2 {
+            color: #2c3e50;
+            font-size: 2.2em;
+            margin-bottom: 25px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .section h2::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 5px;
+            height: 30px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            border-radius: 3px;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .photo-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.8);
+            cursor: pointer;
+        }
+
+        .photo-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        }
+
+        .photo-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .photo-card:hover .photo-image {
+            transform: scale(1.05);
+        }
+
+        .photo-info {
+            padding: 20px;
+        }
+
+        .photo-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .photo-category {
+            display: inline-block;
+            padding: 5px 12px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            opacity: 0.8;
+            padding: 40px 0;
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            top: 20%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .shape:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            bottom: 10%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        .shape:nth-child(4) {
+            width: 70px;
+            height: 70px;
+            bottom: 20%;
+            right: 20%;
+            animation-delay: 1s;
+        }
+
+        .shape:nth-child(5) {
+            width: 90px;
+            height: 90px;
+            top: 60%;
+            left: 70%;
+            animation-delay: 3s;
+        }
+
+        .shape:nth-child(6) {
+            width: 50px;
+            height: 50px;
+            top: 80%;
+            right: 5%;
+            animation-delay: 5s;
+        }
+
+        /* Modal for image preview */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 10000;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 100px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            max-width: 500px;
+            max-height: 350px;
+            position: relative;
+        }
+
+        .modal-image {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 10px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: -50px;
+            right: 0;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: #ff6b6b;
+            transform: scale(1.2);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: rgba(255, 255, 255, 0.95);
+                flex-direction: column;
+                padding: 20px 0;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .nav-link {
+                padding: 10px 20px;
+                border-bottom: 1px solid rgba(0,0,0,0.1);
+            }
+
+            .nav-link:last-child {
+                border-bottom: none;
+            }
+
+            .nav-toggle {
+                display: flex;
+            }
+
+            .nav-toggle.active span:nth-child(1) {
+                transform: rotate(-45deg) translate(-5px, 6px);
+            }
+
+            .nav-toggle.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .nav-toggle.active span:nth-child(3) {
+                transform: rotate(45deg) translate(-5px, -6px);
+            }
+
+            .header h1 {
+                font-size: 2.5em;
+            }
+
+            .main-content {
+                padding: 20px;
+                margin: 20px;
+            }
+
+            .photo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            .modal-close {
+                top: 10px;
+                right: 10px;
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading animation -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <!-- Navigation bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-images"></i>
+                <span>Game Content</span>
+            </div>
+            <div class="nav-menu">
+                <a href="#molecules" class="nav-link">molecules</a>
+                <a href="#enzymes" class="nav-link">enzymes</a>
+                <a href="#cells" class="nav-link">cells</a>
+                <a href="#skills" class="nav-link">skills</a>
+            </div>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header class="header">
+            <h1>Game Content</h1>
+            <p>Explore the visualization of molecules, enzymes, cells, and related concepts in the biochemistry metabolic network</p>
+        </header>
+
+        <main class="main-content">
+            <section id="molecules" class="section">
+                <h2>Molecules</h2>
+                <div class="photo-grid">
+                    <div class="photo-card" onclick="openModal('photo/molecule/Acetyl-CoA.png', 'Acetyl-CoA')">
+                        <img src="photo/molecule/Acetyl-CoA.png" alt="Acetyl-CoA" class="photo-image">
+                        <div class="photo-info">
+                            <div class="photo-title">Acetyl-CoA</div>
+                            <span class="photo-category">molecules</span>
+                        </div>
+                    </div>
+                    <div class="photo-card" onclick="openModal('photo/molecule/Amino acids.png', 'Amino Acids')">
+                        <img src="photo/molecule/Amino acids.png" alt="Amino acids" class="photo-image">
+                        <div class="photo-info">
+                            <div class="photo-title">Amino Acids</div>
+                            <span class="photo-category">molecules</span>
+                        </div>
+                    </div>
+                    <div class="photo-card" onclick="openModal('photo/molecule/ATP.png', 'ATP')">
+                        <img src="photo/molecule/ATP.png" alt="ATP" class="photo-image">
+                        <div class="photo-info">
+                            <div class="photo-title">ATP</div>
+                            <span class="photo-category">molecules</span>
+                        </div>
+                    </div>
+                    <div class="photo-card" onclick="openModal('photo/molecule/Fatty Acids.png', 'Fatty Acids')">
+                        <img src="photo/molecule/Fatty Acids.png" alt="Fatty Acids" class="photo-image">
+                        <div class="photo-info">
+                            <div class="photo-title">Fatty Acids</div>
+                            <span class="photo-category">molecules</span>
+                        </div>
+                    </div>
+                    <div class="photo-card" onclick="openModal('photo/molecule/G3P.png', '3-Phosphoglyceraldehyde (G3P)')">
+                        <img src="photo/molecule/G3P.png" alt="G3P" class="photo-image">
+                        <div class="photo-info">
+                            <div class="photo-title">3-Phosphoglyceraldehyde</div>
+                            <span class="photo-category">molecules</span>
+                        </div>
+                    </div>
+                    <div class="photo-card" onclick="openModal('photo/molecule/Glucose.png', 'Glucose')">
+                        <img src="photo/molecule/Glucose.png" alt="Glucose" class="photo-image">
+                        <div class="photo-info">
+                            <div class="photo-title">Glucose</div>
+                            <span class="photo-category">molecules</span>
+                        </div>
+                    </div>
+                    <div class="photo-card" onclick="openModal('photo/molecule/Glycogen.png', 'Glycogen')">
+                        <img src="photo/molecule/Glycogen.png" alt="Glycogen" class="photo-image">
+                        <div class="photo-info">
+                            <div class="photo-title">Glycogen</div>
+                            <span class="photo-category">molecules</span>
+                        </div>
+                    </div>
+                    <div class="photo-card" onclick="openModal('photo/molecule/Nucleotides.png', 'Nucleotides')">
+                        <img src="photo/molecule/Nucleotides.png" alt="Nucleotides" class="photo-image">
+                        <div class="photo-info">
+                            <div class="photo-title">Nucleotides</div>
+                            <span class="photo-category">molecules</span>
+                        </div>
+                    </div>
+                    <div class="photo-card" onclick="openModal('photo/molecule/Pyruvate.png', 'Pyruvate')">
+                        <img src="photo/molecule/Pyruvate.png" alt="Pyruvate" class="photo-image">
+                        <div class="photo-info">
+                            <div class="photo-title">Pyruvate</div>
+                            <span class="photo-category">molecules</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="enzymes" class="section">
+                <h2>Enzymes</h2>
+                <div class="photo-grid">
+                    <div class="photo-card" onclick="openModal('photo/enzyme/Citrate Synthase.png', 'Citrate Synthase')">
+                        <img src="photo/enzyme/Citrate Synthase.png" alt="Citrate Synthase" class="photo-image">
+                        <div class="photo-info">
+                            <div class="photo-title">Citrate Synthase</div>
+                            <span class="photo-category">enzymes</span>
+                        </div>
+                    </div>
+                    <div class="photo-card" onclick="openModal('photo/enzyme/Glycogen Synthase.png', 'Glycogen Synthase')">
+                        <img src="photo/enzyme/Glycogen Synthase.png" alt="Glycogen Synthase" class="photo-image">
+                        <div class="photo-info">
+                            <div class="photo-title">Glycogen Synthase</div>
+                            <span class="photo-category">enzymes</span>
+                        </div>
+                    </div>
+                    <div class="photo-card" onclick="openModal('photo/enzyme/PFK-1.png', 'Phosphofructokinase-1 (PFK-1)')">
+                        <img src="photo/enzyme/PFK-1.png" alt="PFK-1" class="photo-image">
+                        <div class="photo-info">
+                            <div class="photo-title">Phosphofructokinase-1</div>
+                            <span class="photo-category">enzymes</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="cells" class="section">
+                <h2>Cells</h2>
+                <div class="photo-grid">
+                    <div class="photo-card" onclick="openModal('photo/cell/Brain Cell.png', 'Brain Cell')">
+                        <img src="photo/cell/Brain Cell.png" alt="Brain Cell" class="photo-image">
+                        <div class="photo-info">
+                            <div class="photo-title">Brain Cell</div>
+                            <span class="photo-category">cells</span>
+                        </div>
+                    </div>
+                    <div class="photo-card" onclick="openModal('photo/cell/Hepatocyte.png', 'Hepatocyte')">
+                        <img src="photo/cell/Hepatocyte.png" alt="Hepatocyte" class="photo-image">
+                        <div class="photo-info">
+                            <div class="photo-title">Hepatocyte</div>
+                            <span class="photo-category">cells</span>
+                        </div>
+                    </div>
+                    <div class="photo-card" onclick="openModal('photo/cell/Myocyte.png', 'Myocyte')">
+                        <img src="photo/cell/Myocyte.png" alt="Myocyte" class="photo-image">
+                        <div class="photo-info">
+                            <div class="photo-title">Myocyte</div>
+                            <span class="photo-category">cells</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="skills" class="section">
+                <h2>Skills</h2>
+                <div class="photo-grid">
+                    <div class="photo-card" onclick="openModal('photo/skill/Diabetes(Type 1).png', 'Type 1 Diabetes')">
+                        <img src="photo/skill/Diabetes(Type 1).png" alt="Diabetes Type 1" class="photo-image">
+                        <div class="photo-info">
+                            <div class="photo-title">Type 1 Diabetes</div>
+                            <span class="photo-category">skills</span>
+                        </div>
+                    </div>
+                    <div class="photo-card" onclick="openModal('photo/skill/Diabetes(Type 2).png', 'Type 2 Diabetes')">
+                        <img src="photo/skill/Diabetes(Type 2).png" alt="Diabetes Type 2" class="photo-image">
+                        <div class="photo-info">
+                            <div class="photo-title">Type 2 Diabetes</div>
+                            <span class="photo-category">skills</span>
+                        </div>
+                    </div>
+                    <div class="photo-card" onclick="openModal('photo/skill/Fasting.png', 'Fasting')">
+                        <img src="photo/skill/Fasting.png" alt="Fasting" class="photo-image">
+                        <div class="photo-info">
+                            <div class="photo-title">Fasting</div>
+                                <span class="photo-category">skills</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2025 Biochemistry Metabolic Network Visualization Project | Exploring the Molecular World of Life</p>
+        </footer>
+    </div>
+
+    <!-- Modal for image preview -->
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <img id="modalImage" class="modal-image" src="" alt="">
+            <div id="modalCaption" class="modal-caption"></div>
+        </div>
+    </div>
+
+    <script>
+        // Modal functions
+        function openModal(imageSrc, caption) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            const modalCaption = document.getElementById('modalCaption');
+
+            modal.style.display = 'flex';
+            modalImg.src = imageSrc;
+            modalCaption.textContent = caption;
+
+            // Prevent body scroll when modal is open
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside the image
+        document.getElementById('imageModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Typewriter effect
+        function typeWriter(element, text, speed = 100) {
+            let i = 0;
+            element.innerHTML = '';
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // Start typewriter effect and hide loading animation after page load
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hidden');
+                const subtitle = document.querySelector('.header p');
+                const originalText = subtitle.textContent;
+                typeWriter(subtitle, originalText, 50);
+            }, 1500);
+        });
+
+        // Add scroll animation
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('.section');
+            const scrollTop = window.pageYOffset;
+
+            sections.forEach(section => {
+                const offset = section.offsetTop - window.innerHeight + 100;
+                if (scrollTop > offset) {
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }
+            });
+        });
+
+        // Add mouse follow effect
+        document.addEventListener('mousemove', function(e) {
+            const shapes = document.querySelectorAll('.shape');
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+
+            shapes.forEach((shape, index) => {
+                const speed = (index + 1) * 20;
+                const x = (mouseX - 0.5) * speed;
+                const y = (mouseY - 0.5) * speed;
+                shape.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+
+        // Mobile navigation menu toggle
+        const navToggle = document.querySelector('.nav-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+
+        navToggle.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+            navToggle.classList.toggle('active');
+        });
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+                // Close mobile menu
+                navMenu.classList.remove('active');
+                navToggle.classList.remove('active');
+            });
+        });
+
+        // Navigation bar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+                navbar.style.boxShadow = '0 5px 30px rgba(0,0,0,0.15)';
+            } else {
+                navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+                navbar.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
+            }
+        });
+    </script>
+</body>
+</html>
